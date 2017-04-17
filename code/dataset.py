@@ -181,10 +181,10 @@ class Dataset(object):
                 self.decoder[lang][bucket]['y'][pos][end - 1] = sentence[end - 1]
         
         def fill_encoder(sentence, bucket, pos):
-            start = max(self.buckets_sizes[bucket] - len(sentence), 0)
-            for i in range(start, self.buckets_sizes[bucket]): 
-                self.encoder[lang][bucket]['x'][pos][i] = sentence[i - start]
-                self.encoder[lang][bucket]['length'][pos] = self.buckets_sizes[bucket] - start
+            end = min(len(sentence), self.buckets_sizes[bucket])
+            for i in range(end): 
+                self.encoder[lang][bucket]['x'][pos][i] = sentence[i]
+                self.encoder[lang][bucket]['length'][pos] = end
         
         
         with open(self.source[lang], 'r') as f:
@@ -301,7 +301,6 @@ class Dataset(object):
             
             if show:
                 progress += data['encoder']['en'][bucket]['x'][perms[bucket][start:end]].size
-                print(progress)
                 bar.update(progress)
                 
             yield data['encoder']['en'][bucket]['x'][perms[bucket][start:end]], \
